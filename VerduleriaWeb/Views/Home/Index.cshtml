@@ -1,0 +1,24 @@
+﻿@using VerduleriaWeb.Entidades
+@{
+    ViewData["Title"] = "Home Page";
+    Cliente cliente = ViewBag.Cliente;
+    List<Cliente> lista = ViewBag.ListaCliente;
+    Producto producto = ViewBag.Producto;
+    List<Producto> lista2 = ViewBag.ListaProducto;
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bienvenido</h1>
+    <h1> @( cliente.Nombre)</h1>
+    <h2> @( producto.Nombre)</h2>
+
+
+    @foreach (var item in lista)
+   {
+       <h5>  cliente: @item.Nombre</h5>
+   } 
+   @foreach (var item in lista2)
+   {
+       <h4> producto: @item.Nombre</h4>
+   } 
+</div>
