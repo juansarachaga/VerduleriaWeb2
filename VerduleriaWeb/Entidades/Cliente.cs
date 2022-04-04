@@ -1,4 +1,4 @@
-﻿namespace VerduleriaWeb.Entidades
+﻿ namespace VerduleriaWeb.Entidades
 {
     public class Cliente
     {
