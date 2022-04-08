@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using VerduleriaWeb.Entidades;
 using VerduleriaWeb.EntityFramework;
 
@@ -32,9 +33,10 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ClienteController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            Cliente persona = await dbContext.Clientes.FindAsync(id);
+            return View(persona);
         }
 
         // GET: ClienteController/Create
@@ -61,18 +63,26 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ClienteController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var cliente = await dbContext.Clientes.FindAsync(id);   
+            
+            return View(cliente);
         }
 
         // POST: ClienteController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Cliente cliente)
         {
             try
             {
+                if (id != cliente.Id)
+                {
+                    new Exception("Los id no coinciden");
+                }
+                dbContext.Update(cliente);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -82,18 +92,21 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ClienteController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var cliente = await dbContext.Clientes.FindAsync(id);
             return View();
         }
 
         // POST: ClienteController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, Cliente cliente)
         {
             try
             {
+                dbContext.Remove(cliente);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch

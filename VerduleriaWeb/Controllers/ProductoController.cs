@@ -31,9 +31,10 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ProductoController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            Producto material = await dbContext.Productos.FindAsync(id);
+            return View(material);
         }
 
         // GET: ProductoController/Create
@@ -61,18 +62,25 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ProductoController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit (int id)
         {
-            return View();
+            var producto = await dbContext.Productos.FindAsync(id);
+            return View(producto);
         }
 
         // POST: ProductoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Producto producto)
         {
             try
             {
+                if (id != producto.Id)
+                {
+                    new Exception("Los id no coinciden");
+                }
+                dbContext.Update(producto);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -82,18 +90,21 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ProductoController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var producto = await dbContext.Productos.FindAsync(id);
             return View();
         }
 
         // POST: ProductoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, Producto producto)
         {
             try
             {
+                dbContext.Remove(producto);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
