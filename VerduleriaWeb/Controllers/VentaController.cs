@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VerduleriaWeb.Entidades;
 using VerduleriaWeb.EntityFramework;
+using VerduleriaWeb.Migrations;
 
 namespace VerduleriaWeb.Controllers
 {
@@ -23,9 +24,10 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: VentaController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var venta = await applicationDbContext.Ventas.FindAsync(id);
+            return View(venta);
         }
 
         // GET: VentaController/Create
@@ -53,9 +55,12 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: VentaController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+
+            var venta = await applicationDbContext.Ventas.FindAsync(id);
+            ViewBag.ClienteId = new SelectList(await applicationDbContext.Clientes.ToListAsync(), "Id", "Nombre", venta.ClienteId); 
+            return View(venta);
         }
 
         // POST: VentaController/Edit/5
@@ -65,6 +70,7 @@ namespace VerduleriaWeb.Controllers
         {
             try
             {
+              
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -74,9 +80,10 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: VentaController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var venta = await dbContext.Ventas.FindAsync(id);
+            return View(venta);
         }
 
         // POST: VentaController/Delete/5
