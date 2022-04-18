@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using VerduleriaWeb.Entidades;
 using VerduleriaWeb.EntityFramework;
 
 namespace VerduleriaWeb.Controllers
@@ -17,7 +18,7 @@ namespace VerduleriaWeb.Controllers
         // GET: VentaController
         public async Task<ActionResult> Index()
         {
-            var ventas = await applicationDbContext.Ventas.ToListAsync();
+            var ventas = await applicationDbContext.Ventas.Include(x=>x.Cliente).ToListAsync();
             return View(ventas);
         }
 
@@ -37,10 +38,12 @@ namespace VerduleriaWeb.Controllers
         // POST: VentaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Venta venta)
         {
             try
             {
+                applicationDbContext.Add(venta);
+                await applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
