@@ -93,7 +93,7 @@ namespace VerduleriaWeb.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var producto = await dbContext.Productos.FindAsync(id);
-            return View();
+            return View(producto);
         }
 
         // POST: ProductoController/Delete/5
@@ -109,7 +109,7 @@ namespace VerduleriaWeb.Controllers
             }
             catch
             {
-                return View();
+                return View(producto);
             }
         }
     }

@@ -95,7 +95,7 @@ namespace VerduleriaWeb.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var cliente = await dbContext.Clientes.FindAsync(id);
-            return View();
+            return View(cliente);
         }
 
         // POST: ClienteController/Delete/5
