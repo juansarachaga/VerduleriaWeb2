@@ -11,6 +11,7 @@ namespace VerduleriaWeb.Controllers
     public class VentaController : Controller
     {
         private readonly ApplicationDbContext applicationDbContext;
+        private object dbContext;
 
         public VentaController(ApplicationDbContext applicationDbContext)
         {
@@ -66,11 +67,16 @@ namespace VerduleriaWeb.Controllers
         // POST: VentaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, venta collection)
         {
             try
             {
-              
+                if (id != venta.Id)
+                {
+                    new Exception("Los id no coinciden");
+                }
+                 dbContext.Update(venta);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -79,20 +85,22 @@ namespace VerduleriaWeb.Controllers
             }
         }
 
-        // GET: VentaController/Delete/5
+        // GET: ClienteController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var venta = await dbContext.Ventas.FindAsync(id);
-            return View(venta);
+            //var venta = await dbContext.Ventas.FindAsync(id);
+            return View();
         }
 
-        // POST: VentaController/Delete/5
+        // POST: ClienteController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, Venta venta)
         {
             try
             {
+                //dbContext.Remove(venta);
+                //await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch

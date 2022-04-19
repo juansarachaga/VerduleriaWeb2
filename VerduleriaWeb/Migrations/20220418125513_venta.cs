@@ -7,6 +7,8 @@ namespace VerduleriaWeb.Migrations
 {
     public partial class venta : Migration
     {
+        public static int Id { get; internal set; }
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
