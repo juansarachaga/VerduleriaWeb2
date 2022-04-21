@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VerduleriaWeb.EntityFramework;
 using VerduleriaWeb.Entidades;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VerduleriaWeb.Controllers
 {
@@ -27,7 +28,7 @@ namespace VerduleriaWeb.Controllers
         {
 
             
-            var tickets = await applicationDbContext.Tickets.Include(x => x.Venta).ToListAsync();
+            var tickets = await applicationDbContext.Tickets.Include(x => x.Venta).Include(x => x.Producto).ToListAsync();
             return View(tickets);
         }
 
@@ -38,18 +39,21 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: TicketController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
+            ViewBag.VentaId = new SelectList(await applicationDbContext.Ventas.ToListAsync(), "Id", "Cliente", "Fecha");
             return View();
         }
 
         // POST: TicketController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Ticket ticket)
         {
             try
             {
+                applicationDbContext.Add(ticket);
+                await applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
