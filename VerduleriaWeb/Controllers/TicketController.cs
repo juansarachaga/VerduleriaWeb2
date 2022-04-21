@@ -27,7 +27,7 @@ namespace VerduleriaWeb.Controllers
         {
 
             
-            var tickets = await applicationDbContext.Tickets.Include(x => x.Cliente).Include(x => x.Producto).ToListAsync();
+            var tickets = await applicationDbContext.Tickets.Include(x => x.Venta).ToListAsync();
             return View(tickets);
         }
 
