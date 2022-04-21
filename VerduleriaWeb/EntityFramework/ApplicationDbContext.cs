@@ -11,8 +11,8 @@ namespace VerduleriaWeb.EntityFramework
         {
         }
         public DbSet<Cliente> Clientes { get; set; }
-
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Venta> Ventas { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
     }
 }

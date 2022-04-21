@@ -4,14 +4,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VerduleriaWeb.Entidades;
 using VerduleriaWeb.EntityFramework;
-using VerduleriaWeb.Migrations;
+
 
 namespace VerduleriaWeb.Controllers
 {
     public class VentaController : Controller
     {
         private readonly ApplicationDbContext applicationDbContext;
-        private object dbContext;
+        
+        
 
         public VentaController(ApplicationDbContext applicationDbContext)
         {
@@ -27,7 +28,7 @@ namespace VerduleriaWeb.Controllers
         // GET: VentaController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var venta = await applicationDbContext.Ventas.FindAsync(id);
+            var venta = await applicationDbContext.Ventas.Include(x => x.Cliente).SingleOrDefaultAsync(x => x.Id == id);
             return View(venta);
         }
 
@@ -67,16 +68,16 @@ namespace VerduleriaWeb.Controllers
         // POST: VentaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, venta collection)
+        public async Task<ActionResult> Edit(int id, Venta collection)
         {
             try
             {
-                if (id != venta.Id)
+                if (id != collection.Id)
                 {
                     new Exception("Los id no coinciden");
                 }
-                 dbContext.Update(venta);
-                await dbContext.SaveChangesAsync();
+                applicationDbContext.Update(collection);
+                await applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -88,8 +89,8 @@ namespace VerduleriaWeb.Controllers
         // GET: ClienteController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            //var venta = await dbContext.Ventas.FindAsync(id);
-            return View();
+            var venta = await applicationDbContext.Ventas.Include(x => x.Cliente).SingleOrDefaultAsync(x => x.Id == id);
+            return View(venta);
         }
 
         // POST: ClienteController/Delete/5
@@ -99,13 +100,13 @@ namespace VerduleriaWeb.Controllers
         {
             try
             {
-                //dbContext.Remove(venta);
-                //await dbContext.SaveChangesAsync();
+                applicationDbContext.Remove(venta);
+                await applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(venta);
             }
         }
     }
