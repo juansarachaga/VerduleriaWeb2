@@ -10,8 +10,8 @@ namespace VerduleriaWeb.Controllers
         {
 
             //Crear constructor
-            var ventas = await applicationDbContext.Ticket.Include(x => x.Venta).Include(x => x.Producto)ToListAsync();
-            return View(ventas);
+            //var ticket = await applicationDbContext.Ticket.Include(x => x.Venta).Include(x => x.Producto)ToListAsync();
+            return View(ticket);
         }
 
         // GET: TicketController/Details/5
