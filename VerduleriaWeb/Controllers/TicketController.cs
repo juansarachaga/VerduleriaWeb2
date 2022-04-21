@@ -1,16 +1,33 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using VerduleriaWeb.EntityFramework;
+using VerduleriaWeb.Entidades;
 
 namespace VerduleriaWeb.Controllers
 {
-    public class TicketController : Controller
+
+
+   
+
+
+        public class TicketController : Controller
     {
+        private readonly ApplicationDbContext applicationDbContext;
+
+
+        public TicketController(ApplicationDbContext applicationDbContext)
+        {
+            this.applicationDbContext = applicationDbContext;
+
+
+        }
         // GET: TicketController
         public async Task<ActionResult> Index()
         {
 
-            //Crear constructor
-            //var ticket = await applicationDbContext.Ticket.Include(x => x.Venta).Include(x => x.Producto)ToListAsync();
+            
+            var ticket = await applicationDbContext.Tickets.Include(x => x.Cliente).Include(x => x.Producto).ToListAsync();
             return View(ticket);
         }
 
