@@ -9,10 +9,10 @@ namespace VerduleriaWeb.Controllers
 {
 
 
-   
 
 
-        public class TicketController : Controller
+
+    public class TicketController : Controller
     {
         private readonly ApplicationDbContext applicationDbContext;
 
@@ -27,7 +27,7 @@ namespace VerduleriaWeb.Controllers
         public async Task<ActionResult> Index()
         {
 
-            
+
             var tickets = await applicationDbContext.Tickets.Include(x => x.Venta).Include(x => x.Producto).ToListAsync();
             return View(tickets);
         }
@@ -41,7 +41,8 @@ namespace VerduleriaWeb.Controllers
         // GET: TicketController/Create
         public async Task<ActionResult> Create()
         {
-            ViewBag.VentaId = new SelectList(await applicationDbContext.Ventas.ToListAsync(), "Id", "Cliente", "Fecha");
+            ViewBag.VentaId = new SelectList(await applicationDbContext.Ventas.ToListAsync(), "Id", "Id");
+            ViewBag.ProductoId = new SelectList(await applicationDbContext.Productos.ToListAsync(), "Id", "Nombre");
             return View();
         }
 
@@ -63,18 +64,27 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: TicketController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var ticket = await applicationDbContext.Tickets.FindAsync(id);
+            ViewBag.TicketId = new SelectList(await applicationDbContext.Tickets.ToListAsync(), "Id", "Venta.Id");
+            return View(ticket);
+           
         }
 
         // POST: TicketController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, IFormCollection collection)
         {
             try
             {
+                if (id != collection.Id)
+                {
+                    new Exception("Los id no coinciden");
+                }
+                applicationDbContext.Update(collection);
+                await applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -82,11 +92,11 @@ namespace VerduleriaWeb.Controllers
                 return View();
             }
         }
-
         // GET: TicketController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var ticket = await applicationDbContext.Tickets.Include(x => x.Venta).Include(x => x.Producto).SingleOrDefaultAsync(x => x.Id == id);
+            return View(ticket);
         }
 
         // POST: TicketController/Delete/5
