@@ -33,9 +33,10 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: TicketController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var ticket = await applicationDbContext.Tickets.Include(x => x.Venta).Include(x => x.Producto).SingleOrDefaultAsync(x => x.Id == id);
+            return View(ticket);
         }
 
         // GET: TicketController/Create
@@ -75,8 +76,9 @@ namespace VerduleriaWeb.Controllers
         // POST: TicketController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Ticket collection)
         {
+          
             try
             {
                 if (id != collection.Id)
@@ -102,15 +104,17 @@ namespace VerduleriaWeb.Controllers
         // POST: TicketController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, Ticket ticket)
         {
             try
             {
+                applicationDbContext.Remove(ticket);
+                await applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(ticket);
             }
         }
     }
