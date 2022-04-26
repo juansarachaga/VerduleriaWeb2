@@ -1,26 +1,42 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using VerduleriaWeb.Entidades;
+using VerduleriaWeb.EntityFramework;
 
 namespace VerduleriaWeb.Controllers
 {
     public class ClienteController : Controller
+
+        
     {
-        // GET: ClienteController
-        public ActionResult Index()
+
+        private ApplicationDbContext dbContext;
+        public ClienteController(ApplicationDbContext applicationDbContext)
         {
-            var cliente1 = new Cliente { Id = 1, Nombre = "Gaston", Telefono = "1234" };
-            var cliente2 = new Cliente { Id = 2, Nombre = "JuanPablo", Telefono = "1234" };
-            var lista = new List<Cliente>();
-            lista.Add(cliente1);
-            lista.Add(cliente2);
+            dbContext = applicationDbContext;
+        }
+        
+        // GET: ClienteController
+        public async Task<ActionResult> Index()
+        {
+            //var cliente1 = new Cliente { Id = 1, Nombre = "Gaston", Telefono = "1234" };
+            //var cliente2 = new Cliente { Id = 2, Nombre = "JuanPablo", Telefono = "1234" };
+            //var lista = new List<Cliente>();
+            //lista.Add(cliente1);
+            //lista.Add(cliente2);
+
+
+            var lista = await dbContext.Clientes.ToListAsync();
             return View(lista);
         }
 
         // GET: ClienteController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            Cliente persona = await dbContext.Clientes.FindAsync(id);
+            return View(persona);
         }
 
         // GET: ClienteController/Create
@@ -32,10 +48,12 @@ namespace VerduleriaWeb.Controllers
         // POST: ClienteController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Cliente cliente)
         {
             try
             {
+                dbContext.Add(cliente);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -45,18 +63,26 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ClienteController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var cliente = await dbContext.Clientes.FindAsync(id);   
+            
+            return View(cliente);
         }
 
         // POST: ClienteController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Cliente cliente)
         {
             try
             {
+                if (id != cliente.Id)
+                {
+                    new Exception("Los id no coinciden");
+                }
+                dbContext.Update(cliente);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -66,18 +92,21 @@ namespace VerduleriaWeb.Controllers
         }
 
         // GET: ClienteController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var cliente = await dbContext.Clientes.FindAsync(id);
+            return View(cliente);
         }
 
         // POST: ClienteController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, Cliente cliente)
         {
             try
             {
+                dbContext.Remove(cliente);
+                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch
