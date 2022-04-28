@@ -68,7 +68,8 @@ namespace VerduleriaWeb.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var ticket = await applicationDbContext.Tickets.FindAsync(id);
-            ViewBag.TicketId = new SelectList(await applicationDbContext.Tickets.ToListAsync(), "Id", "Venta.Id");
+            ViewBag.VentaId = new SelectList(await applicationDbContext.Ventas.ToListAsync(), "Id", "Id");
+            ViewBag.ProductoId = new SelectList(await applicationDbContext.Productos.ToListAsync(), "Id", "Nombre");
             return View(ticket);
            
         }
